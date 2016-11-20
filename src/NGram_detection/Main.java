@@ -17,8 +17,6 @@ public class Main {
     public static String output_file = "ngram_list.dat";
 
     public static void main(String[] args) {
-
-
         // access arguments
         for (int i = 0; i != args.length; i++) {
             if (args[i].equalsIgnoreCase("-i")) {
@@ -43,33 +41,29 @@ public class Main {
 
     }
 
-    public static void countOccurrences(Map<String,Integer> map) {
-
+    private static void countOccurrences(Map<String, Integer> map) {
         // Create Hash (Occurrence Map)
         try {
             Files.lines(Paths.get(input_file))
             .forEach(line -> {
                 // Split Line
                 String[] parts = line.split(" ");
-                for (int i=0; i <parts.length; i++) {
-                    if (!isNumeric(parts[i])){
-                        if (map.containsKey(parts[i])) {
-                            //key exists
-                            map.put(parts[i], map.get(parts[i]) + 1);
-                        } else {
-                            //key does not exists
-                            map.put(parts[i], 1);
+                for (String part : parts) {
+                    if (!isNumeric(part)) {
+                        if (map.containsKey(part)) { //key exists
+                            map.put(part, map.get(part) + 1);
+                        } else { //key does not exists
+                            map.put(part, 1);
                         }
                     }
                 }
             });
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void printOccurrenceMap(Map<String,Integer> map){
+    private static void printOccurrenceMap(Map<String, Integer> map){
         Iterator iterator = map.keySet().iterator();
         System.out.println("Printing Occurrence Map!");
         while (iterator.hasNext()) {
@@ -79,7 +73,8 @@ public class Main {
         }
     }
 
-    public static boolean isNumeric(String str){
+    private static boolean isNumeric(String str){
         return str.matches("-?\\d+(\\.\\d+)?");
     }
+
 }

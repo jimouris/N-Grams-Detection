@@ -1,11 +1,13 @@
 package NGram_detection;
 
+import java.util.Collections;
 import java.util.Vector;
 
 /**
  * Created by thanos on 20/11/2016.
  */
 public class NGram {
+
     public NGram(int size, int maxDist, Vector<String> terms) {
         this.size = size;
         this.maxDist = maxDist;
@@ -48,9 +50,19 @@ public class NGram {
 
    public String toString(){
        String nGram = "";
-       for (String term:this.terms) {
+       for (String term : this.terms) {
            nGram += (term + " ");
        }
-       return  nGram;
+       return nGram + "| maxdist: " + this.maxDist + " | size: " + this.size;
    }
+
+   static NGram parseLineToNgram(String line) {
+       String[] arr = line.split(" ");
+       Vector<String> terms = new Vector<>();
+       Collections.addAll(terms, arr);
+       String last = terms.get(terms.size() - 1);
+       terms.remove(last);
+       return new NGram(terms.size(), Integer.parseInt(last), terms);
+   }
+
 }

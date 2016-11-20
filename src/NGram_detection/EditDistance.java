@@ -11,7 +11,10 @@ public class EditDistance {
         else return z;
     }
 
-    public static int editDist(String str1, String str2, int m, int n) {
+    public static int editDist(String str1, String str2) {
+        int m = str1.length();
+        int n = str2.length();
+
         // Create a table to store results of subproblems
         int dp[][] = new int[m+1][n+1];
 

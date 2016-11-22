@@ -1,7 +1,6 @@
 package NGram_detection;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -12,7 +11,7 @@ import java.util.*;
 public class Main {
 
     private static String input_file = "input.dat";
-    private static String output_file = "ngram_list.dat";
+    private static String output_file = null;
 
     public static void main(String[] args) {
         // access arguments
@@ -34,14 +33,26 @@ public class Main {
         Map<String, Integer> occurrence_map = new HashMap<String, Integer>();
         countOccurrences(occurrence_map);
 //        printOccurrenceMap(occurrence_map);
-        System.out.println("---------------------------------------");
-        System.out.println("Occurrence is finished!");
+        System.out.println("Occurrence map has been created!");
         List<IndexNode> index = create_index(occurrence_map, input_file);
-        System.out.println("+++++++++++++++++++++++++++++++++++++++");
-//        for (int i = 0 ; i < index.size() ; i++) {
-//            IndexNode node = index.get(i);
-//            System.out.println("index[" + i + "] = Key: " + node.getKey() + " - Value: " + node.getValue());
-//        }
+        System.out.println("Indexing has been created!");
+
+        // print to output file the index
+        if (output_file != null) {
+            BufferedWriter bufferedWriter;
+            try {
+                bufferedWriter = new BufferedWriter(new FileWriter(output_file));
+                PrintWriter printWriter = new PrintWriter(bufferedWriter);
+                for (int i = 0; i < index.size(); i++) {
+                    IndexNode node = index.get(i);
+                    printWriter.println("index[" + i + "] = Key: " + node.getKey() + " - Value: " + node.getValue());
+//                    System.out.println("index[" + i + "] = Key: " + node.getKey() + " - Value: " + node.getValue());
+                }
+                printWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 

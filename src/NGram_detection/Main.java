@@ -33,32 +33,36 @@ public class Main {
 
         Map<String, Integer> occurrence_map = new HashMap<String, Integer>();
         countOccurrences(occurrence_map);
-        printOccurrenceMap(occurrence_map);
+//        printOccurrenceMap(occurrence_map);
         System.out.println("---------------------------------------");
         System.out.println("Occurrence is finished!");
         List<IndexNode> index = create_index(occurrence_map, input_file);
         System.out.println("+++++++++++++++++++++++++++++++++++++++");
-        for (int i = 0 ; i < index.size() ; i++) {
-            IndexNode node = index.get(i);
-            System.out.println("index[" + i + "] = Key: " + node.getKey() + " - Value: " + node.getValue());
-        }
+//        for (int i = 0 ; i < index.size() ; i++) {
+//            IndexNode node = index.get(i);
+//            System.out.println("index[" + i + "] = Key: " + node.getKey() + " - Value: " + node.getValue());
+//        }
 
     }
 
     // Create Hash (Occurrence Map)
     private static void countOccurrences(Map<String, Integer> map) {
+        Vector<String> terms = new Vector<>();
+
         try {
             Files.lines(Paths.get(input_file))
             .forEach(line -> {
                 // Split Line
                 String[] parts = line.split(" ");
-                for (String part : parts) {
-                    if (!isNumeric(part)) {
-                        if (map.containsKey(part)) { //key exists
-                            map.put(part, map.get(part) + 1);
-                        } else { //key does not exists
-                            map.put(part, 1);
-                        }
+                terms.clear();
+                Collections.addAll(terms, parts);
+                String last = terms.get(terms.size() - 1);
+                terms.remove(last);
+                for (String part : terms) {
+                    if (map.containsKey(part)) { //key exists
+                        map.put(part, map.get(part) + 1);
+                    } else { //key does not exists
+                        map.put(part, 1);
                     }
                 }
             });
@@ -99,8 +103,8 @@ public class Main {
                 }
                 IndexNode indexNode = new IndexNode(tmp.get(min_offset), ngram);
                 index.add(indexNode);
-                System.out.print("index[" + Integer.toString(index.size()-1) + "] = ");
-                System.out.println(index.get(index.size()-1).getValue().toString());
+//                System.out.print("index[" + Integer.toString(index.size()-1) + "] = ");
+//                System.out.println(index.get(index.size()-1).getValue().toString());
             });
         } catch (IOException e) {
             e.printStackTrace();

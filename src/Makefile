@@ -22,4 +22,4 @@ clean:
 MAIN = $(PACKAGE).Main
 
 run:
-	$(JVM) $(MAIN) -i terms2.tsv -o out.dat
+	$(JVM) $(MAIN) -i terms2.dat -o out.dat

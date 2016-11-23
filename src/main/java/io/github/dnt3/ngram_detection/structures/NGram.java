@@ -1,4 +1,6 @@
-package NGram_detection;
+package io.github.dnt3.ngram_detection.structures;
+
+import io.github.dnt3.ngram_detection.edit_distance.EditDistance;
 
 import java.util.Collections;
 import java.util.Vector;
@@ -56,7 +58,7 @@ public class NGram {
        return nGram + "| maxdist: " + this.maxDist + " | size: " + this.size;
    }
 
-   static NGram parseLineToNgram(String line) {
+    public static NGram parseLineToNgram(String line) {
        String[] arr = line.split(" ");
        Vector<String> terms = new Vector<>();
        Collections.addAll(terms, arr);

@@ -1,4 +1,4 @@
-package NGram_detection;
+package io.github.dnt3.ngram_detection.edit_distance;
 
 /**
  * Created by jimouris on 11/20/16.

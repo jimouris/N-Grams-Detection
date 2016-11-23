@@ -1,4 +1,7 @@
-package NGram_detection;
+package io.github.dnt3.ngram_detection;
+
+import io.github.dnt3.ngram_detection.structures.IndexNode;
+import io.github.dnt3.ngram_detection.structures.NGram;
 
 import java.io.*;
 import java.nio.file.Files;

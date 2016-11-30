@@ -55,7 +55,8 @@ public class NGram {
        for (String term : this.terms) {
            nGram += (term + " ");
        }
-       return nGram + "| maxdist: " + this.maxDist + " | size: " + this.size;
+//       return nGram + "| maxdist: " + this.maxDist + " | size: " + this.size;
+       return nGram + "(" + this.maxDist + ")";
    }
 
     public static NGram parseLineToNgram(String line) {

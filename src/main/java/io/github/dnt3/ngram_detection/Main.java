@@ -33,28 +33,24 @@ public class Main {
             return;
         }
 
-        Map<String, Integer> occurrence_map = new HashMap<String, Integer>();
+        Map<String, Integer> occurrence_map = new HashMap<>();
         countOccurrences(occurrence_map);
 //        printOccurrenceMap(occurrence_map);
         System.out.println("Occurrence map has been created!");
-        List<IndexNode> index = create_index(occurrence_map, input_file);
+        Map<String, IndexNode> index = create_index(occurrence_map, input_file);
         System.out.println("Indexing has been created!");
 
         // print to output file the index
         if (output_file != null) {
-            BufferedWriter bufferedWriter;
             try {
-                bufferedWriter = new BufferedWriter(new FileWriter(output_file));
-                PrintWriter printWriter = new PrintWriter(bufferedWriter);
-                for (int i = 0; i < index.size(); i++) {
-                    IndexNode node = index.get(i);
-                    printWriter.println("index[" + i + "] = Key: " + node.getKey() + " - Value: " + node.getValue());
-//                    System.out.println("index[" + i + "] = Key: " + node.getKey() + " - Value: " + node.getValue());
-                }
-                printWriter.close();
+                PrintStream printStream = new PrintStream(output_file);
+                printMap(index, printStream);
+                printStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            printMap(index, System.out);
         }
 
     }
@@ -99,8 +95,8 @@ public class Main {
         return str.matches("-?\\d+(\\.\\d+)?");
     }
 
-    private static List<IndexNode> create_index(Map<String, Integer> map, final String input_file) {
-        List<IndexNode> index = new ArrayList<>();
+    private static Map<String, IndexNode> create_index(Map<String, Integer> map, final String input_file) {
+        Map<String, IndexNode> index = new HashMap<>();
         try {
             Files.lines(Paths.get(input_file)).forEach(line -> {
                 NGram ngram = NGram.parseLineToNgram(line);
@@ -116,14 +112,20 @@ public class Main {
                     }
                 }
                 IndexNode indexNode = new IndexNode(tmp.get(min_offset), ngram);
-                index.add(indexNode);
-//                System.out.print("index[" + Integer.toString(index.size()-1) + "] = ");
-//                System.out.println(index.get(index.size()-1).getValue().toString());
+                index.put(indexNode.getKey(), indexNode);
             });
         } catch (IOException e) {
             e.printStackTrace();
         }
         return index;
+    }
+
+    private static void printMap(Map<String, IndexNode> map, PrintStream printWriter) {
+        for (Map.Entry<String, IndexNode> entry : map.entrySet()) {
+            String key = entry.getKey();
+            IndexNode value = entry.getValue();
+            printWriter.println("Key: " + key + " - value: " + value.getValue());
+        }
     }
 
 }

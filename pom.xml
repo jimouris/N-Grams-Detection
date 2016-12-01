@@ -41,7 +41,9 @@
 				  <mainClass>io.github.dnt3.ngram_detection.Main</mainClass>
 				  <arguments>
 					<argument>-i</argument>
-					<argument>path_to_file</argument>
+					<argument>./src/terms2.dat</argument>
+                    <argument>-o</argument>
+					<argument>./myout.dat</argument>
 				  </arguments>
 				</configuration>
 			  </plugin>

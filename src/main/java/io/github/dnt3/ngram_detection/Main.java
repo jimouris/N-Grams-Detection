@@ -37,7 +37,7 @@ public class Main {
         countOccurrences(occurrence_map);
 //        printOccurrenceMap(occurrence_map);
         System.out.println("Occurrence map has been created!");
-        Map<String, Vector<IndexNode>> index = create_index(occurrence_map, input_file);
+        Map<String, Vector<NGram>> index = create_index(occurrence_map, input_file);
         System.out.println("Indexing has been created!");
 
         // print to output file the index
@@ -95,8 +95,8 @@ public class Main {
         return str.matches("-?\\d+(\\.\\d+)?");
     }
 
-    private static Map<String, Vector<IndexNode>> create_index(Map<String, Integer> map, final String input_file) {
-        Map<String, Vector<IndexNode>> index = new HashMap<>();
+    private static Map<String, Vector<NGram>> create_index(Map<String, Integer> map, final String input_file) {
+        Map<String, Vector<NGram>> index = new HashMap<>();
         try {
             Files.lines(Paths.get(input_file)).forEach(line -> {
                 NGram ngram = NGram.parseLineToNgram(line);
@@ -111,14 +111,16 @@ public class Main {
                         min_offset = i;
                     }
                 }
-                IndexNode indexNode = new IndexNode(tmp.get(min_offset), ngram);
-                if (index.containsKey(indexNode.getKey())) {
-                    Vector<IndexNode> indx_vec = index.get(indexNode.getKey());
-                    indx_vec.add(indexNode);
+                /* Insert to hash */
+                String key = tmp.get(min_offset);
+                Vector<NGram> ngrams_vec;
+                if (index.containsKey(key)) {
+                    ngrams_vec = index.get(key);
+                    ngrams_vec.add(ngram);
                 } else {
-                    Vector<IndexNode> indx_vec = new Vector<>();
-                    indx_vec.add(indexNode);
-                    index.put(indexNode.getKey(), indx_vec);
+                    ngrams_vec = new Vector<>();
+                    ngrams_vec.add(ngram);
+                    index.put(key, ngrams_vec);
                 }
             });
         } catch (IOException e) {
@@ -127,13 +129,13 @@ public class Main {
         return index;
     }
 
-    private static void printMap(Map<String, Vector<IndexNode>> map, PrintStream printWriter) {
-        for (Map.Entry<String, Vector<IndexNode>> entry : map.entrySet()) {
+    private static void printMap(Map<String, Vector<NGram>> map, PrintStream printWriter) {
+        for (Map.Entry<String, Vector<NGram>> entry : map.entrySet()) {
             String key = entry.getKey();
-            Vector<IndexNode> indx_vec = entry.getValue();
+            Vector<NGram> ngrams_vec = entry.getValue();
             printWriter.print("Key: " + key + "\nValues: " );
-            for (IndexNode node : indx_vec) {
-                printWriter.print(node.getValue() + "\n\t\t");
+            for (NGram node : ngrams_vec) {
+                printWriter.print(node + "\n\t\t");
             }
             printWriter.println();
         }

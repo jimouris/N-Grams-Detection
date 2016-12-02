@@ -1,6 +1,5 @@
 package io.github.dnt3.ngram_detection;
 
-import io.github.dnt3.ngram_detection.structures.IndexNode;
 import io.github.dnt3.ngram_detection.structures.NGram;
 
 import java.io.*;
@@ -35,24 +34,22 @@ public class Main {
 
         Map<String, Integer> occurrence_map = new HashMap<>();
         countOccurrences(occurrence_map);
-//        printOccurrenceMap(occurrence_map);
         System.out.println("Occurrence map has been created!");
         Map<String, Vector<NGram>> index = create_index(occurrence_map, input_file);
         System.out.println("Indexing has been created!");
 
         // print to output file the index
-        if (output_file != null) {
-            try {
-                PrintStream printStream = new PrintStream(output_file);
-                printMap(index, printStream);
-                printStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            printMap(index, System.out);
-        }
-
+//        if (output_file != null) {
+//            try {
+//                PrintStream printStream = new PrintStream(output_file);
+//                printMap(index, printStream, occurrence_map);
+//                printStream.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            printMap(index, System.out, occurrence_map);
+//        }
     }
 
     // Create Hash (Occurrence Map)
@@ -81,38 +78,14 @@ public class Main {
         }
     }
 
-    private static void printOccurrenceMap(Map<String, Integer> map){
-        Iterator iterator = map.keySet().iterator();
-        System.out.println("Printing Occurrence Map!");
-        while (iterator.hasNext()) {
-            String key = iterator.next().toString();
-            Integer value = map.get(key);
-            System.out.println("Key: " + key + " - value: " + value);
-        }
-    }
-
-    private static boolean isNumeric(String str){
-        return str.matches("-?\\d+(\\.\\d+)?");
-    }
-
-    private static Map<String, Vector<NGram>> create_index(Map<String, Integer> map, final String input_file) {
+    private static Map<String, Vector<NGram>> create_index(Map<String, Integer> occurrence_map, final String input_file) {
         Map<String, Vector<NGram>> index = new HashMap<>();
         try {
             Files.lines(Paths.get(input_file)).forEach(line -> {
                 NGram ngram = NGram.parseLineToNgram(line);
-                Vector<String> tmp = ngram.getTerms();
-                int min_term = map.get(tmp.get(0));
-                int min_offset = 0;
+                String key = ngram.findLeastUsedWord(occurrence_map);
 
-                for (int i = 0; i < tmp.size() ; i++) {
-                    int occurrence = map.get(tmp.get(i));
-                    if (occurrence < min_term) {
-                        min_term = occurrence;
-                        min_offset = i;
-                    }
-                }
                 /* Insert to hash */
-                String key = tmp.get(min_offset);
                 Vector<NGram> ngrams_vec;
                 if (index.containsKey(key)) {
                     ngrams_vec = index.get(key);
@@ -129,13 +102,15 @@ public class Main {
         return index;
     }
 
-    private static void printMap(Map<String, Vector<NGram>> map, PrintStream printWriter) {
+    private static void printMap(Map<String, Vector<NGram>> map, PrintStream printWriter, Map<String, Integer> occurrence_map) {
+        printWriter.println("Found " + map.size() + " words.\n\n");
         for (Map.Entry<String, Vector<NGram>> entry : map.entrySet()) {
             String key = entry.getKey();
             Vector<NGram> ngrams_vec = entry.getValue();
-            printWriter.print("Key: " + key + "\nValues: " );
+            printWriter.print("Key:" + key + " ("+occurrence_map.get(key)+")\t\tValues:\t" );
             for (NGram node : ngrams_vec) {
-                printWriter.print(node + "\n\t\t");
+                printWriter.print(node + "\n\t\t\t");
+                printWriter.print(node + "\n\t\t\t");
             }
             printWriter.println();
         }

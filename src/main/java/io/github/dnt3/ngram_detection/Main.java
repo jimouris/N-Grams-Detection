@@ -16,7 +16,7 @@ public class Main {
 
     private static int max_n = 0;
     private static String input_file = "input.dat";
-    private static String output_file = null;
+    private static PrintStream printStream = System.out;
 
     public static void main(String[] args) {
 
@@ -25,7 +25,12 @@ public class Main {
             if (args[i].equalsIgnoreCase("-i")) {
                 input_file = args[i+1];
             } else if (args[i].equalsIgnoreCase("-o")) {
-                output_file = args[i+1];
+                String output_file = args[i+1];
+                try {
+                    printStream = new PrintStream(output_file);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             } else if (args[i].equalsIgnoreCase("-h")) {
                 System.out.println("Program's flags:  -i inputFile -o outputFile");
             }
@@ -39,20 +44,8 @@ public class Main {
         Map<String, Integer> occurrence_map = new HashMap<>();
         countOccurrences(occurrence_map);
         Map<String, Vector<NGram>> index = create_index(occurrence_map, input_file);
-        System.out.println("F");
-
-        // print to output file the index
-        if (output_file != null) {
-            try {
-                PrintStream printStream = new PrintStream(output_file);
-                printMap(index, printStream, occurrence_map);
-                printStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            printMap(index, System.out, occurrence_map);
-        }
+        printStream.println("\nF\n");
+        printMap(index, printStream, occurrence_map);
 
 		/*Search in file*/
         LinkedList<String> searchTerms = new LinkedList<>();
@@ -88,7 +81,7 @@ public class Main {
                                 }
                                 search_offset++;
                                 if (areEqual) {
-                                    System.out.println("NGram match! key: " + searchKey + ",\tngram: " + ngram);
+                                    printStream.println("NGram match! key: " + searchKey + ",\tngram: " + ngram);
                                 }
                             }
                         } /* else Skip it */

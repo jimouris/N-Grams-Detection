@@ -6,9 +6,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Vector;
 
-/**
- * Created by thanos on 20/11/2016.
- */
+
 public class NGram {
 
     private int size;

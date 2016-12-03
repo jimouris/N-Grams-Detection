@@ -1,8 +1,6 @@
 package io.github.dnt3.ngram_detection.edit_distance;
 
-/**
- * Created by jimouris on 11/20/16.
- */
+
 public class EditDistance {
 
     private static int min(int x, int y, int z) {

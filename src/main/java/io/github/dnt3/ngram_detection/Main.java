@@ -18,11 +18,11 @@ public class Main {
      * _search file is created by merging sub-files (by using the ... script). Every line in the _search_file corresponds to a sub-file.
      * (This convention is for multithreaded purposes.)
      **/
-    private static int _max_n = 0;
+    static int _max_n = 0;
     private static String _ngram_file = "input.dat";
     private static String _search_file = "text_stream.dat";
     private static PrintStream _printStream = System.out;
-    private static int _cores = Runtime.getRuntime().availableProcessors();
+    private static final int _cores = Runtime.getRuntime().availableProcessors();
 
 	public static void main(String[] args) {
 
@@ -52,14 +52,13 @@ public class Main {
             System.exit(-1);
         }
 
-		Map<String, Integer> occurrence_map = new HashMap<>();
-		countOccurrences(occurrence_map);
-		Map<String, Vector<NGram>> index = create_index(occurrence_map, _ngram_file);
-		// printMap(index, _printStream, occurrence_map);
+        Helper helper = new Helper(_ngram_file);
+		helper.countOccurrences();
+		Map<String, Vector<NGram>> index = helper.create_index();
+//		 helper.printMap(index, _printStream);
 		_printStream.println("\nF\n");
 
-
-        System.out.println(_cores + " available");
+        System.out.println(_cores + " cores available\n");
         ExecutorService executor = new ThreadPoolExecutor(1, _cores, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
 
         Stream<String> all_files = null;
@@ -76,76 +75,6 @@ public class Main {
 			e.printStackTrace();
 		} finally {
 			if (all_files != null) all_files.close();
-		}
-
-	}
-
-	// Create Hash (Occurrence Map)
-	private static void countOccurrences(Map<String, Integer> map) {
-		Vector<String> terms = new Vector<>();
-		Stream<String> lines = null;
-		try {
-			lines = Files.lines(Paths.get(_ngram_file));
-			lines.forEach(line -> {
-				// Split Line
-				String[] parts = line.split(" ");
-				terms.clear();
-				Collections.addAll(terms, parts);
-				int n = terms.size();
-				String last = terms.get(n - 1);
-				terms.remove(last);
-				if(n-1 > _max_n){
-					_max_n = n-1;
-				}
-				for (String part : terms) {
-					if (map.containsKey(part)) { //key exists
-						map.put(part, map.get(part) + 1);
-					} else { //key does not exists
-						map.put(part, 1);
-					}
-				}
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (lines != null)
-				lines.close();
-		}
-	}
-
-	private static Map<String, Vector<NGram>> create_index(Map<String, Integer> occurrence_map, final String _ngram_file) {
-		Map<String, Vector<NGram>> index = new HashMap<>();
-		try {
-			Files.lines(Paths.get(_ngram_file)).forEach(line -> {
-				NGram ngram = NGram.parseLineToNgram(line);
-				String key = ngram.findLeastUsedWord(occurrence_map);
-				/* Insert to hash */
-				Vector<NGram> ngrams_vec;
-				if (index.containsKey(key)) {
-					ngrams_vec = index.get(key);
-					ngrams_vec.add(ngram);
-				} else {
-					ngrams_vec = new Vector<>();
-					ngrams_vec.add(ngram);
-					index.put(key, ngrams_vec);
-				}
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return index;
-	}
-
-	private static void printMap(Map<String, Vector<NGram>> map, PrintStream printWriter, Map<String, Integer> occurrence_map) {
-		printWriter.println("Found " + map.size() + " words.\n\n");
-		for (Map.Entry<String, Vector<NGram>> entry : map.entrySet()) {
-			String key = entry.getKey();
-			Vector<NGram> ngrams_vec = entry.getValue();
-			printWriter.print("Key:" + key + " ("+occurrence_map.get(key)+")\t\tValues:\t" );
-			for (NGram node : ngrams_vec) {
-				printWriter.print(node + "\n\t\t\t");
-			}
-			printWriter.println();
 		}
 	}
 

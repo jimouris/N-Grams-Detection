@@ -76,6 +76,13 @@ public class Main {
 		} finally {
 			if (all_files != null) all_files.close();
 		}
+
+		executor.shutdown();
+		try {
+			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		} catch (InterruptedException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 }

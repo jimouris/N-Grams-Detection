@@ -5,6 +5,10 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 
@@ -18,6 +22,7 @@ public class Main {
     private static String _ngram_file = "input.dat";
     private static String _search_file = "text_stream.dat";
     private static PrintStream _printStream = System.out;
+    private static int _cores = Runtime.getRuntime().availableProcessors();
 
 	public static void main(String[] args) {
 
@@ -53,60 +58,26 @@ public class Main {
 		// printMap(index, _printStream, occurrence_map);
 		_printStream.println("\nF\n");
 
-		/* Search in file */
-		LinkedList<String> searchTerms = new LinkedList<>();
-		for (int i = 0; i< _max_n-1; i++) searchTerms.add("");
-		Stream<String> lines = null;
-		try {
-			String search_file = _search_file;
-			lines = Files.lines(Paths.get(search_file));
-			lines.forEach(line -> {
-				String searchKey, backupKey;
-				String[] parts = line.split(" ");
-				for (String part : parts) {
-					if (searchTerms.size() < 2*_max_n-1){
-						searchTerms.add(part);
-					}
-					if (searchTerms.size() >= 2*_max_n-1) {
-						int search_offset = _max_n-1;
-						int backup_offset = _max_n-1;
-						searchKey = searchTerms.get(search_offset);
-						/* Search middle term */
-						if (index.containsKey(searchKey)) {
-							Vector<NGram> ngrams = index.get(searchKey);
-							for (NGram ngram : ngrams) {
-								// List<String> foundStrings = new ArrayList<>();
-								int offset = ngram.getOffset();
-								boolean areEqual = true;
-								for (int i=0 ; i<ngram.getSize() ; i++) {
-									backupKey = searchTerms.get(backup_offset-offset+i);
-									Vector<String> terms = ngram.getTerms();
-									if (!terms.get(i).equals(backupKey)) {
-										areEqual = false;
-										break;
-									}
-									// else {
-									// 	foundStrings.add(backupKey);
-									// }
-								}
-								search_offset++;
-								if (areEqual) {
-									// _printStream.println("NGram match! key: " + foundStrings + ",\tngram: " + ngram);
-									_printStream.println(ngram);
-								}
-							}
-						} /* else Skip it */
-						searchTerms.remove(); /* remove first */
-					}
-				}
+
+        System.out.println(_cores + " available");
+        ExecutorService executor = new ThreadPoolExecutor(1, _cores, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+
+        Stream<String> all_files = null;
+        try {
+            // for each sub-file (newline) create a new searcher
+            all_files = Files.lines(Paths.get(_search_file));
+            all_files.forEach(line -> {
+
+                Runnable runnable = new Searcher(index, line, _printStream, _max_n);
+                executor.execute(runnable);
+
 			});
-			// TODO: check-fix hot finish!
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (lines != null)
-				lines.close();
+			if (all_files != null) all_files.close();
 		}
+
 	}
 
 	// Create Hash (Occurrence Map)

@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 public class Main {
 
     /**
-     * _search file is created by merging sub-files (by using the ... script). Every line in the _search_file corresponds to a sub-file.
+     * _search file is created by merging sub-files (by using the "./converter" script). Every line in the _search_file corresponds to a sub-file.
      * (This convention is for multithreaded purposes.)
      **/
     static int _max_n = 0;
@@ -58,7 +58,7 @@ public class Main {
 //		 helper.printMap(index, _printStream);
 		_printStream.println("\nF\n");
 
-        System.out.println(_cores + " cores available\n");
+//        System.out.println(_cores + " cores available\n");
         ExecutorService executor = new ThreadPoolExecutor(1, _cores, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
 
         Stream<String> all_files = null;

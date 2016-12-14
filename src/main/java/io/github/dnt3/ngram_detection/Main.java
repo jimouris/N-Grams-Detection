@@ -45,25 +45,28 @@ public class Main {
 		}
 
 		if (!(new File(_ngram_file)).exists()){
-			System.out.println("Wrong flags! N-gram file does not exist. \nUse -h to see commands");
+			System.err.println("Wrong flags! N-gram file does not exist. \nUse -h to see commands");
 			System.exit(-1);
 		} else if (!(new File(_search_file)).exists()) {
-            System.out.println("Wrong flags! Search file does not exist. \nUse -h to see commands");
+            System.err.println("Wrong flags! Search file does not exist. \nUse -h to see commands");
             System.exit(-1);
         }
 
+        long tStart = System.currentTimeMillis();
         Helper helper = new Helper(_ngram_file);
 		helper.countOccurrences();
 		Map<String, Vector<NGram>> index = helper.create_index();
 //		 helper.printMap(index, _printStream);
-		_printStream.println("\nF\n");
+        long tEnd = System.currentTimeMillis();
+        System.out.println("Building index: " + (tEnd - tStart)/1000.0 + " sec.");
+		System.out.println("\nF\n");
 
 //        System.out.println(_cores + " cores available\n");
+        tStart = System.currentTimeMillis();
         ExecutorService executor = new ThreadPoolExecutor(1, _cores, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
-
         Stream<String> all_files = null;
+        // for each sub-file (newline) create a new searcher
         try {
-            // for each sub-file (newline) create a new searcher
             all_files = Files.lines(Paths.get(_search_file));
             all_files.forEach(line -> {
 
@@ -76,13 +79,14 @@ public class Main {
 		} finally {
 			if (all_files != null) all_files.close();
 		}
-
 		executor.shutdown();
 		try {
 			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 		} catch (InterruptedException e) {
 			System.err.println(e.getMessage());
 		}
+        tEnd = System.currentTimeMillis();
+        System.out.println("\nSearching time: " + (tEnd - tStart)/1000.0 + " sec.");
 	}
 
 }

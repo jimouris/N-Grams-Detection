@@ -25,7 +25,7 @@ public class Searcher implements Runnable {
     /* Search in file */
     @Override
     public void run() {
-        LinkedList<String> searchTerms = new LinkedList<>();
+        ArrayList<String> searchTerms = new ArrayList<>();
         for (int i = 0; i< _max_n-1; i++) searchTerms.add("");
         String search_file = _search_file;
         String searchKey, backupKey;
@@ -56,13 +56,13 @@ public class Searcher implements Runnable {
                         if (areEqual) syncPrint(ngram.toString());
                     }
                 } /* else Skip it */
-                searchTerms.remove(); /* remove first */
+                searchTerms.remove(0); /* remove first */
             }
         }
         // TODO: check-fix hot finish!
     }
 
-    // TODO: maybe this is a bottleneck
+    // TODO: seemed to be a bottleneck, but after running extensive benchmarks seem to be ok
     private void syncPrint(String s) {
         synchronized (_printStream) {
             _printStream.println(s);

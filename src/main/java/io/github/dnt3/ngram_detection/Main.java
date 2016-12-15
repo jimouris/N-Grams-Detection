@@ -1,13 +1,17 @@
 package io.github.dnt3.ngram_detection;
 
 import io.github.dnt3.ngram_detection.structures.NGram;
-import java.io.*;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -55,7 +59,7 @@ public class Main {
         long tStart = System.currentTimeMillis();
         Helper helper = new Helper(_ngram_file);
 		helper.countOccurrences();
-		Map<String, Vector<NGram>> index = helper.create_index();
+		Map<String, ArrayList<NGram>> index = helper.create_index();
 //		 helper.printMap(index, _printStream);
         long tEnd = System.currentTimeMillis();
         System.out.println("Building index: " + (tEnd - tStart)/1000.0 + " sec.");
@@ -63,7 +67,7 @@ public class Main {
 
 //        System.out.println(_cores + " cores available\n");
         tStart = System.currentTimeMillis();
-        ExecutorService executor = new ThreadPoolExecutor(1, _cores, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+        ExecutorService pool = Executors.newFixedThreadPool(_cores);
         Stream<String> all_files = null;
         // for each sub-file (newline) create a new searcher
         try {
@@ -71,7 +75,7 @@ public class Main {
             all_files.forEach(line -> {
 
                 Runnable runnable = new Searcher(index, line, _printStream, _max_n);
-                executor.execute(runnable);
+                pool.execute(runnable);
 
 			});
 		} catch (IOException e) {
@@ -79,9 +83,9 @@ public class Main {
 		} finally {
 			if (all_files != null) all_files.close();
 		}
-		executor.shutdown();
+		pool.shutdown();
 		try {
-			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+			pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 		} catch (InterruptedException e) {
 			System.err.println(e.getMessage());
 		}

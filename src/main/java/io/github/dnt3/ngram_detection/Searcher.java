@@ -1,20 +1,21 @@
 package io.github.dnt3.ngram_detection;
 
 import io.github.dnt3.ngram_detection.structures.NGram;
+
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Vector;
 
 
 public class Searcher implements Runnable {
 
-    private Map<String, Vector<NGram>> _index;
+    private Map<String, ArrayList<NGram>> _index;
     private int _max_n;
     private String _search_file;
     private final PrintStream _printStream;
 
-    Searcher(Map<String, Vector<NGram>> index, String search_sub_file, PrintStream printStream, int max_n) {
+    Searcher(Map<String, ArrayList<NGram>> index, String search_sub_file, PrintStream printStream, int max_n) {
         this._index = index;
         this._search_file = search_sub_file;
         this._printStream = printStream;
@@ -39,13 +40,13 @@ public class Searcher implements Runnable {
                 searchKey = searchTerms.get(search_offset);
                 /* Search middle term */
                 if (_index.containsKey(searchKey)) {
-                    Vector<NGram> ngrams = _index.get(searchKey);
+                    ArrayList<NGram> ngrams = _index.get(searchKey);
                     for (NGram ngram : ngrams) {
                         int offset = ngram.getOffset();
                         boolean areEqual = true;
                         for (int i=0 ; i<ngram.getSize() ; i++) {
                             backupKey = searchTerms.get(backup_offset-offset+i);
-                            Vector<String> terms = ngram.getTerms();
+                            ArrayList<String> terms = ngram.getTerms();
                             if (!terms.get(i).equals(backupKey)) {
                                 areEqual = false;
                                 break;

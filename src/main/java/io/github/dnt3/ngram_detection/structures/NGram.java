@@ -2,9 +2,9 @@ package io.github.dnt3.ngram_detection.structures;
 
 import io.github.dnt3.ngram_detection.edit_distance.EditDistance;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Vector;
 
 
 public class NGram {
@@ -12,9 +12,9 @@ public class NGram {
     private int size;
     private int maxDist;
     private int offset;
-    private Vector<String> terms;
+    private ArrayList<String> terms;
 
-    public NGram(int size, int maxDist, Vector<String> terms) {
+    public NGram(int size, int maxDist, ArrayList<String> terms) {
         this.size = size;
         this.maxDist = maxDist;
         this.terms = terms;
@@ -33,11 +33,11 @@ public class NGram {
         return maxDist;
     }
 
-    public Vector<String> getTerms() {
+    public ArrayList<String> getTerms() {
         return terms;
     }
 
-    public boolean getEditDistance(Vector<String> nGram){
+    public boolean getEditDistance(ArrayList<String> nGram){
         int distance = 0;
         for(int i=0; i<nGram.size(); i++){
             distance += EditDistance.editDist(nGram.get(i),this.terms.get(i));
@@ -58,7 +58,7 @@ public class NGram {
 
     public static NGram parseLineToNgram(String line) {
        String[] arr = line.split(" ");
-       Vector<String> terms = new Vector<>();
+       ArrayList<String> terms = new ArrayList<>();
        Collections.addAll(terms, arr);
        String last = terms.get(terms.size() - 1);
        terms.remove(last);
@@ -66,7 +66,7 @@ public class NGram {
    }
 
    public String findLeastUsedWord(Map<String, Integer> occurrence_map) {
-       Vector<String> tmp = this.getTerms();
+       ArrayList<String> tmp = this.getTerms();
        int min_occurrence = occurrence_map.get(tmp.get(0));
        int min_offset = 0, occurrence;
        for (int i = 0 ; i < tmp.size() ; i++) {

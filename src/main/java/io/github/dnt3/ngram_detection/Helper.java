@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 import java.util.stream.Stream;
 
 import static io.github.dnt3.ngram_detection.Main._max_n;
@@ -26,7 +26,7 @@ class Helper {
     }
 
     Map<String, Integer> countOccurrences() {
-        Vector<String> terms = new Vector<>();
+        ArrayList<String> terms = new ArrayList<>();
         Stream<String> lines = null;
         try {
             lines = Files.lines(Paths.get(_ngram_file));
@@ -57,21 +57,21 @@ class Helper {
         return _occurrence_map;
     }
 
-    Map<String, Vector<NGram>> create_index() {
-        Map<String, Vector<NGram>> index = new HashMap<>();
+    Map<String, ArrayList<NGram>> create_index() {
+        Map<String, ArrayList<NGram>> index = new HashMap<>();
         try {
             Files.lines(Paths.get(_ngram_file)).forEach(line -> {
                 NGram ngram = NGram.parseLineToNgram(line);
                 String key = ngram.findLeastUsedWord(_occurrence_map);
 				/* Insert to hash */
-                Vector<NGram> ngrams_vec;
+                ArrayList<NGram> ngrams_lst;
                 if (index.containsKey(key)) {
-                    ngrams_vec = index.get(key);
-                    ngrams_vec.add(ngram);
+                    ngrams_lst = index.get(key);
+                    ngrams_lst.add(ngram);
                 } else {
-                    ngrams_vec = new Vector<>();
-                    ngrams_vec.add(ngram);
-                    index.put(key, ngrams_vec);
+                    ngrams_lst = new ArrayList<>();
+                    ngrams_lst.add(ngram);
+                    index.put(key, ngrams_lst);
                 }
             });
         } catch (IOException e) {
@@ -80,11 +80,11 @@ class Helper {
         return index;
     }
 
-    void printMap(Map<String, Vector<NGram>> index, PrintStream printWriter) {
+    void printMap(Map<String, ArrayList<NGram>> index, PrintStream printWriter) {
         printWriter.println("Found " + index.size() + " words.\n\n");
-        for (Map.Entry<String, Vector<NGram>> entry : index.entrySet()) {
+        for (Map.Entry<String, ArrayList<NGram>> entry : index.entrySet()) {
             String key = entry.getKey();
-            Vector<NGram> ngrams_vec = entry.getValue();
+            ArrayList<NGram> ngrams_vec = entry.getValue();
             printWriter.print("Key:" + key + " (" + _occurrence_map.get(key) + ")\t\tValues:\t" );
             for (NGram node : ngrams_vec) {
                 printWriter.print(node + "\n\t\t\t");

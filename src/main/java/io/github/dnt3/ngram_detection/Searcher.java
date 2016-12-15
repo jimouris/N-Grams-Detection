@@ -62,7 +62,7 @@ public class Searcher implements Runnable {
         // TODO: check-fix hot finish!
     }
 
-    // TODO: seemed to be a bottleneck, but after running extensive benchmarks seem to be ok
+    //seemed to be a bottleneck, but after running extensive benchmarks seem to be ok
     private void syncPrint(String s) {
         synchronized (_printStream) {
             _printStream.println(s);

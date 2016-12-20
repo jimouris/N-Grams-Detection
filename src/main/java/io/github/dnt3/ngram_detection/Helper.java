@@ -15,17 +15,17 @@ import java.util.stream.Stream;
 import static io.github.dnt3.ngram_detection.Main._max_n;
 
 
-class Helper {
+public class Helper {
 
     private final String _ngram_file;
     private Map<String, Integer> _occurrence_map;
 
-    Helper(String ngram_file) {
+    public Helper(String ngram_file) {
         this._ngram_file = ngram_file;
         this._occurrence_map = new HashMap<>();
     }
 
-    Map<String, Integer> countOccurrences() {
+    public Map<String, Integer> countOccurrences() {
         ArrayList<String> terms = new ArrayList<>();
         Stream<String> lines = null;
         try {
@@ -57,7 +57,28 @@ class Helper {
         return _occurrence_map;
     }
 
-    Map<String, ArrayList<NGram>> create_index() {
+
+    public ArrayList<NGram> geNGramTerms() {
+        ArrayList<NGram> ngramList = new ArrayList<>();
+        ArrayList<String> terms = new ArrayList<>();
+        Stream<String> lines = null;
+        try {
+            lines = Files.lines(Paths.get(_ngram_file));
+            lines.forEach(line -> {
+                NGram ngram = NGram.parseLineToNgram(line);
+                ngramList.add(ngram);
+
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (lines != null) lines.close();
+        }
+        return ngramList;
+    }
+
+
+    public Map<String, ArrayList<NGram>> create_index() {
         Map<String, ArrayList<NGram>> index = new HashMap<>();
         try {
             Files.lines(Paths.get(_ngram_file)).forEach(line -> {
@@ -80,7 +101,7 @@ class Helper {
         return index;
     }
 
-    void printMap(Map<String, ArrayList<NGram>> index, PrintStream printWriter) {
+    public void printMap(Map<String, ArrayList<NGram>> index, PrintStream printWriter) {
         printWriter.println("Found " + index.size() + " words.\n\n");
         for (Map.Entry<String, ArrayList<NGram>> entry : index.entrySet()) {
             String key = entry.getKey();

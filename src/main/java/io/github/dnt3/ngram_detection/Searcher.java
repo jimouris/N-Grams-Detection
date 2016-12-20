@@ -39,20 +39,19 @@ public class Searcher implements Runnable {
     @Override
     public void run() {
 
-
         if (_native_flag){
             String search_file = _search_file;
             for (int i=0; i < _nGrams.size(); i++){
                 String[] parts = search_file.split(" ");
                 boolean success = false;
-                for (int ctext = 0; ctext < parts.length-1; ctext++ ) {
+                for (int ctext = 0; ctext < parts.length; ctext++ ) {
                     success = false;
                     if (parts[ctext].equals(_nGrams.get(i).getTerms().get(0))) {
-                        for (int ftetst = 1; ftetst < _nGrams.get(i).getTerms().size(); ftetst++) {
-                            if ( ctext+ftetst< parts.length && ftetst < _nGrams.get(i).getTerms().size() ) {
-                                if (parts[ctext + ftetst].equals(_nGrams.get(i).getTerms().get(ftetst))) {
+                        for (int ftext = 1; ftext < _nGrams.get(i).getTerms().size(); ftext++) {
+                            if ( ctext+ftext< parts.length && ftext < _nGrams.get(i).getTerms().size() ) {
+                                if (parts[ctext + ftext].equals(_nGrams.get(i).getTerms().get(ftext)))
                                     success = true;
-                                } else {
+                                else {
                                     success = false;
                                     break;
                                 }
@@ -62,14 +61,12 @@ public class Searcher implements Runnable {
                                 break;
                             }
                         }
-                        if (success)
-                        System.out.println("I found perfect match, ngram: " + _nGrams.get(i).toString());
+                        if (success) // syncPrint(_nGrams.get(i).toString());
+                            System.out.println("I found perfect match, ngram: " + _nGrams.get(i).toString());
                     }
                 }
             }
-        }
-
-        else {
+        } else {
             ArrayList<String> searchTerms = new ArrayList<>();
             for (int i = 0; i < _max_n - 1; i++) searchTerms.add("");
             String search_file = _search_file;

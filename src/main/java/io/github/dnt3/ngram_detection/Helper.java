@@ -60,7 +60,6 @@ public class Helper {
 
     public ArrayList<NGram> geNGramTerms() {
         ArrayList<NGram> ngramList = new ArrayList<>();
-        ArrayList<String> terms = new ArrayList<>();
         Stream<String> lines = null;
         try {
             lines = Files.lines(Paths.get(_ngram_file));

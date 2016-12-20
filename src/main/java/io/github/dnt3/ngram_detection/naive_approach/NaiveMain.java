@@ -10,7 +10,6 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -22,11 +21,6 @@ import java.util.stream.Stream;
 public class NaiveMain {
 
 
-    /**
-     * _search file is created by merging sub-files (by using the "./converter" script). Every line in the _search_file corresponds to a sub-file.
-     * (This convention is for multithreaded purposes.)
-     **/
-    static int _max_n = 0;
     private static String _ngram_file = "input.dat";
     private static String _search_file = "text_stream.dat";
     private static PrintStream _printStream = System.out;
@@ -79,7 +73,7 @@ public class NaiveMain {
             all_files = Files.lines(Paths.get(_search_file));
             all_files.forEach(line -> {
 
-                Runnable runnable = new Searcher(nGrams, line, _printStream, _max_n, true);
+                Runnable runnable = new Searcher(nGrams, line, _printStream, 0, true);
                 pool.execute(runnable);
 
             });

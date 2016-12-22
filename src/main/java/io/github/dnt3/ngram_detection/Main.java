@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,22 +26,17 @@ public class Main {
     static int _max_n = 0;
     private static String _ngram_file = "input.dat";
     private static String _search_file = "text_stream.dat";
-    private static PrintStream _printStream = System.out;
+    private static String _output_file = "output_file.dat";
     private static final int _cores = Runtime.getRuntime().availableProcessors();
+	private static List<PrintStream> _printStreamList = new ArrayList<>();
 
 	public static void main(String[] args) {
-
 		// access arguments
 		for (int i = 0; i != args.length; i++) {
 			if (args[i].equalsIgnoreCase("-i")) {
 				_ngram_file = args[i+1];
 			} else if (args[i].equalsIgnoreCase("-o")) {
-				String output_file = args[i+1];
-				try {
-					_printStream = new PrintStream(output_file);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
+				_output_file = args[i+1];
 			} else if (args[i].equalsIgnoreCase("-f")) {
                 _search_file = args[i+1];
             } else if (args[i].equalsIgnoreCase("-h")) {
@@ -52,9 +48,17 @@ public class Main {
 			System.err.println("Wrong flags! N-gram file does not exist. \nUse -h to see commands");
 			System.exit(-1);
 		} else if (!(new File(_search_file)).exists()) {
-            System.err.println("Wrong flags! Search file does not exist. \nUse -h to see commands");
-            System.exit(-1);
-        }
+			System.err.println("Wrong flags! Search file does not exist. \nUse -h to see commands");
+			System.exit(-1);
+		}
+		try {
+			_output_file = _output_file.substring(0, _output_file.lastIndexOf('.'));
+			for (int core = 0 ; core < _cores ; core++) {
+				_printStreamList.add(new PrintStream(_output_file + "_" + core + ".dat"));
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 
         long tStart = System.currentTimeMillis();
         Helper helper = new Helper(_ngram_file);
@@ -65,16 +69,16 @@ public class Main {
         System.out.println("Building index: " + (tEnd - tStart)/1000.0 + " sec.");
 		System.out.println("\nF\n");
 
-//        System.out.println(_cores + " cores available\n");
         tStart = System.currentTimeMillis();
         ExecutorService pool = Executors.newFixedThreadPool(_cores);
         Stream<String> all_files = null;
         // for each sub-file (newline) create a new searcher
-        try {
-            all_files = Files.lines(Paths.get(_search_file));
+		try {
+			final int[] i = {0};
+			all_files = Files.lines(Paths.get(_search_file));
             all_files.forEach(line -> {
 
-                Runnable runnable = new Searcher(index, line, _printStream, _max_n);
+                Runnable runnable = new Searcher(index, line, _printStreamList.get(i[0]++ % _cores), _max_n);
                 pool.execute(runnable);
 
 			});

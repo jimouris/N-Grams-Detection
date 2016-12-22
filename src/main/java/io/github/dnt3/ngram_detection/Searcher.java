@@ -33,24 +33,21 @@ public class Searcher implements Runnable {
 		parts.addAll(Arrays.asList(search_file.split(" ")));
 		for (int i = 0; i< _max_n-1; i++) parts.add(""); // For hot finish
 		for(int i = _max_n - 1; i < parts.size()-(_max_n-1); i++ ){
-			int search_offset = i;
-			int backup_offset = i;
-			searchKey = parts.get(search_offset);
+			searchKey = parts.get(i);
 			/* Search middle term */
-			if (_index.containsKey(searchKey)) {
-				ArrayList<NGram> ngrams = _index.get(searchKey);
+			ArrayList<NGram> ngrams = _index.get(searchKey);
+			if (ngrams != null) { // If index contains searchKey
 				for (NGram ngram : ngrams) {
 					int offset = ngram.getOffset();
 					boolean areEqual = true;
 					for (int j=0 ; j<ngram.getSize() ; j++) {
-						backupKey = parts.get(backup_offset-offset+j);
+						backupKey = parts.get(i-offset+j);
 						ArrayList<String> terms = ngram.getTerms();
 						if (!terms.get(j).equals(backupKey)) {
 							areEqual = false;
 							break;
 						}
 					}
-					search_offset++;
 					if (areEqual) syncPrint(ngram.toString());
 				}
 			} /* else Skip it */

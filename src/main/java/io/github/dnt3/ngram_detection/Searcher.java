@@ -36,8 +36,8 @@ public class Searcher implements Runnable {
 		for(i = _max_n - 1; i < parts.size()-(_max_n-1); i++ ){
 			searchKey = parts.get(i);
 			/* Search middle term */
-			if (_index.containsKey(searchKey)) {
-				ArrayList<NGram> ngrams = _index.get(searchKey);
+			ArrayList<NGram> ngrams = _index.get(searchKey);
+			if (ngrams != null) { // If index contains searchKey
 				for (NGram ngram : ngrams) {
 					offset = ngram.getOffset();
 					areEqual = true;

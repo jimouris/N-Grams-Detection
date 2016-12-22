@@ -14,7 +14,7 @@ public class NGram {
     private int offset;
     private ArrayList<String> terms;
 
-    public NGram(int size, int maxDist, ArrayList<String> terms) {
+    private NGram(int size, int maxDist, ArrayList<String> terms) {
         this.size = size;
         this.maxDist = maxDist;
         this.terms = terms;
@@ -53,7 +53,7 @@ public class NGram {
        for (String term : this.terms) {
            nGram += (term + " ");
        }
-       return nGram + "(" + this.offset + ")";
+       return nGram;
    }
 
     public static NGram parseLineToNgram(String line) {

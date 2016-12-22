@@ -64,10 +64,10 @@ public class Main {
         Helper helper = new Helper(_ngram_file);
 		helper.countOccurrences();
 		Map<String, ArrayList<NGram>> index = helper.create_index();
-//		 helper.printMap(index, _printStream);
+//		helper.printMap(index, System.err);
         long tEnd = System.currentTimeMillis();
         System.out.println("Building index: " + (tEnd - tStart)/1000.0 + " sec.");
-		System.out.println("\nF\n");
+		System.out.println("\nF");
 
         tStart = System.currentTimeMillis();
         ExecutorService pool = Executors.newFixedThreadPool(_cores);

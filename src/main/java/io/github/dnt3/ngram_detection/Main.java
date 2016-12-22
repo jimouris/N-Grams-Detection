@@ -22,7 +22,6 @@ public class Main {
      * _search file is created by merging sub-files (by using the "./converter" script). Every line in the _search_file corresponds to a sub-file.
      * (This convention is for multithreaded purposes.)
      **/
-    static int _max_n = 0;
     private static String _ngram_file = "input.dat";
     private static String _search_file = "text_stream.dat";
     private static PrintStream _printStream = System.out;
@@ -58,9 +57,8 @@ public class Main {
 
         long tStart = System.currentTimeMillis();
         Helper helper = new Helper(_ngram_file);
-		helper.countOccurrences();
-		Map<String, ArrayList<NGram>> index = helper.create_index();
-//		 helper.printMap(index, _printStream);
+		ArrayList<NGram> ngrams = helper.geNGramTerms();
+
         long tEnd = System.currentTimeMillis();
         System.out.println("Building index: " + (tEnd - tStart)/1000.0 + " sec.");
 		System.out.println("\nF\n");
@@ -74,7 +72,7 @@ public class Main {
             all_files = Files.lines(Paths.get(_search_file));
             all_files.forEach(line -> {
 
-                Runnable runnable = new Searcher(index, line, _printStream, _max_n);
+                Runnable runnable = new Searcher(ngrams, line, _printStream);
                 pool.execute(runnable);
 
 			});

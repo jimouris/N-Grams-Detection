@@ -2,6 +2,8 @@ package io.github.dnt3.ngram_detection;
 
 import io.github.dnt3.ngram_detection.structures.NGram;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -10,11 +12,11 @@ public class Searcher implements Runnable {
 
 	private Map<String, ArrayList<NGram>> _index;
 	private int _max_n;
-	private String _search_file;
+	private File _search_file;
 	private final PrintStream _printStream;
 	private Set<String> _out_set;
 
-	Searcher(Map<String, ArrayList<NGram>> index, String search_sub_file, PrintStream printStream, int max_n) {
+	Searcher(Map<String, ArrayList<NGram>> index, File search_sub_file, PrintStream printStream, int max_n) {
 		this._index = index;
 		this._search_file = search_sub_file;
 		this._printStream = printStream;
@@ -30,9 +32,21 @@ public class Searcher implements Runnable {
 		ArrayList<NGram> ngrams;
 		ArrayList<String> terms;
 		ArrayList<String> parts = new ArrayList<>();
+		Scanner s = null;
+		try{
+			s = new Scanner(_search_file).useDelimiter("\\s+");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();  
+		}
 		for (i = 0; i < _max_n-1; i++) parts.add(""); // For cold start
-		parts.addAll(Arrays.asList(_search_file.split(" ")));
+		while(s.hasNext()){
+			parts.addAll(Arrays.asList(s.next().split("\\s+")));
+		}
 		for (i = 0; i < _max_n-1; i++) parts.add(""); // For hot finish
+		s.close();
+		// for (String part: parts){
+		// 	System.out.println("part: |"+part+"|");
+		// }
 		for (i = _max_n - 1; i < parts.size()-(_max_n-1); i++) {
 			ngrams = _index.get(parts.get(i));
 			/* If index contains searchKey */
@@ -53,5 +67,4 @@ public class Searcher implements Runnable {
 		}
 		for (String ngram : _out_set) _printStream.println(ngram);
 	}
-
 }

@@ -43,7 +43,7 @@
                         <argument>-i</argument>
                         <argument>./src/terms2.dat</argument>
                         <argument>-f</argument>
-                        <argument>./ftext.dat</argument>
+                        <argument>./texts</argument>
                         <argument>-o</argument>
                         <argument>./myout.dat</argument>
                     </arguments>

@@ -9,51 +9,45 @@ import java.util.Map;
 
 public class NGram {
 
-    private int size;
-    private int maxDist;
-    private int offset;
-    private ArrayList<String> terms;
+    private int _size;
+    private int _maxDist;
+    private int _offset;
+    private ArrayList<String> _terms;
 
-    private NGram(int size, int maxDist, ArrayList<String> terms) {
-        this.size = size;
-        this.maxDist = maxDist;
-        this.terms = terms;
-        this.offset = 0;
+    private NGram(int _size, int maxDist, ArrayList<String> terms) {
+        this._size = _size;
+        this._maxDist = maxDist;
+        this._terms = terms;
+        this._offset = 0;
     }
 
-    public int getOffset() { return offset; }
-
-    private void setOffset(int offset) { this.offset = offset; }
+    public int getOffset() { return _offset; }
 
     public int getSize() {
-        return size;
-    }
-
-    public int getMaxDist() {
-        return maxDist;
+        return _size;
     }
 
     public ArrayList<String> getTerms() {
-        return terms;
+        return _terms;
     }
 
     public boolean getEditDistance(ArrayList<String> nGram){
         int distance = 0;
         for(int i=0; i<nGram.size(); i++){
-            distance += EditDistance.editDist(nGram.get(i),this.terms.get(i));
-            if(distance > this.maxDist){
+            distance += EditDistance.editDist(nGram.get(i), _terms.get(i));
+            if(distance > _maxDist){
                 return false;
             }
         }
-        return (distance <= maxDist);
+        return (distance <= _maxDist);
     }
 
    public String toString(){
        String nGram = "";
-       for(int i = 0; i < this.size-1; i++){
-           nGram += (terms.get(i) + " ");
+       for(int i = 0; i < _size-1; i++){
+           nGram += (_terms.get(i) + " ");
        }
-       nGram += terms.get(this.size-1);
+       nGram += _terms.get(_size-1);
        return nGram;
    }
 
@@ -67,18 +61,17 @@ public class NGram {
    }
 
    public String findLeastUsedWord(Map<String, Integer> occurrence_map) {
-       ArrayList<String> tmp = this.getTerms();
-       int min_occurrence = occurrence_map.get(tmp.get(0));
+       int min_occurrence = occurrence_map.get(_terms.get(0));
        int min_offset = 0, occurrence;
-       for (int i = 0 ; i < tmp.size() ; i++) {
-           occurrence = occurrence_map.get(tmp.get(i));
+       for (int i = 1 ; i < _terms.size() ; i++) {
+           occurrence = occurrence_map.get(_terms.get(i));
            if (occurrence < min_occurrence) {
                min_occurrence = occurrence;
                min_offset = i;
            }
        }
-       this.setOffset(min_offset);
-       return tmp.get(min_offset);
+       _offset = min_offset;
+       return _terms.get(min_offset);
    }
 
 }

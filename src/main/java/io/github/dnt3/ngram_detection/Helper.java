@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static io.github.dnt3.ngram_detection.Main._max_n;
@@ -26,22 +23,18 @@ class Helper {
     }
 
     Map<String, Integer> countOccurrences() {
-        ArrayList<String> terms = new ArrayList<>();
         Stream<String> lines = null;
         try {
             lines = Files.lines(Paths.get(_ngram_file));
             lines.forEach(line -> {
-                // Split Line
+                String part;
                 String[] parts = line.split(" ");
-                terms.clear();
-                Collections.addAll(terms, parts);
-                int n = terms.size();
-                String last = terms.get(n - 1);
-                terms.remove(last);
-                if(n-1 > _max_n){
-                    _max_n = n-1;
+                int len = parts.length;
+                if (len-1 > _max_n) {
+                    _max_n = len - 1;
                 }
-                for (String part : terms) {
+                for (int i = 0 ; i < len-1 ; i++) {
+                    part = parts[i];
                     if (_occurrence_map.containsKey(part)) { //key exists
                         _occurrence_map.put(part, _occurrence_map.get(part) + 1);
                     } else { //key does not exists

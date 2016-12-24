@@ -56,7 +56,7 @@ public class NGram {
        ArrayList<String> terms = new ArrayList<>();
        Collections.addAll(terms, arr);
        String last = terms.get(terms.size() - 1);
-       terms.remove(last);
+       terms.remove(terms.size()-1);
        return new NGram(terms.size(), Integer.parseInt(last), terms);
    }
 

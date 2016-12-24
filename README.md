@@ -1,4 +1,4 @@
-#N-Grams-Detection
+#N-Grams-Detection [![License MIT][badge-license]](LICENSE)
 
 An n-gram is a contiguous sequence of N items from a given sequence of text or speech. The items can be phonemes, syllables, letters, words or base pairs according to the application. An n-gram of size 1 is referred to as a unigram, size 2 is a bigram and size 3 is a trigram. In our approach, n-grams are words and are unigrams. More information about n-grams can be found [here.](https://en.wikipedia.org/wiki/N-gram)
 
@@ -58,3 +58,4 @@ In the next figule, you may find the different kind of techniques and times of o
 
 ![screen shot 2016-12-24 at 22 14 50](https://cloud.githubusercontent.com/assets/11991105/21468653/6f0ec336-ca26-11e6-9550-8a37d5cee4cc.png)
 
+[badge-license]: https://img.shields.io/badge/license-MIT-green.svg

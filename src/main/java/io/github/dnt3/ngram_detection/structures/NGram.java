@@ -50,9 +50,10 @@ public class NGram {
 
    public String toString(){
        String nGram = "";
-       for (String term : this.terms) {
-           nGram += (term + " ");
+       for(int i = 0; i < this.size-1; i++){
+           nGram += (terms.get(i) + " ");
        }
+       nGram += terms.get(this.size-1);
        return nGram;
    }
 

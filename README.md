@@ -1,4 +1,4 @@
-#N-Grams-Detection [![License MIT][badge-license]](LICENSE)
+# N-Grams-Detection [![License MIT][badge-license]](LICENSE)
 
 An n-gram is a contiguous sequence of N items from a given sequence of text or speech. The items can be phonemes, syllables, letters, words or base pairs according to the application. An n-gram of size 1 is referred to as a unigram, size 2 is a bigram and size 3 is a trigram. In our approach, n-grams are words and are unigrams. More information about n-grams can be found [here.](https://en.wikipedia.org/wiki/N-gram)
 
@@ -8,17 +8,17 @@ For example, we will use n-gram like the figure below.
 
 **Basic Target** of N-Grams-Detection repository, is to **detect** specific list of n-grams in any text file.
 
-##Pre-computations
+## Pre-computations
 
 Our program obtains all n-grams (with various N) in memory, by reading an n-gram file (see CLI arguments section below), and constructs two data-structures (HashMap). The first HashMap (occurrence-HashMap) counts the occurrences of every word in n-gram file and the second HashMap (index-HashMap) has the important words based on occurrence-HashMap as key and lists of all related n-grams as value.
 
-##Search
+## Search
 
 After Pre-computation procedure, our program checks if text words exist in index-HashMap. If the searched word is in the index-HashMap, our program searches in the text backwards and forward to confirm if the related text matches with the specific n-gram. To speedup the search, we invented a "centralized text", namely one line of input file is a sub-file. This action will parallel our experiment using threads for every line of our input file. This input file is created by the converter.sh (shell script) which takes as arguments all the sub-files and creates our centralized file (ftexts.dat).
 
 
 
-##Command line arguments
+## Command line arguments
 Our application accepts the following command line arguments:
 
 ```
@@ -45,7 +45,7 @@ MAVEN_OPTS="-Xmx10240m" mvn exec:java
 
 # Evaluation
 
-##Testbed
+## Testbed
 
 DNT3 TEAM runs several experiments to improve the algorithm (four approaches), these based on a physical machine with the following specs:
 

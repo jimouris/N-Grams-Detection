@@ -34,7 +34,7 @@ usage: Main
 ```
 
 
-##Running program with Maven
+## Running program with Maven
 
 Change main's arguments in pom.xml file and run the following commands:
 

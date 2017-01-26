@@ -58,4 +58,4 @@ In the next figule, you may find the different kind of techniques and times of o
 
 ![screen shot 2016-12-24 at 22 14 50](https://cloud.githubusercontent.com/assets/11991105/21468653/6f0ec336-ca26-11e6-9550-8a37d5cee4cc.png)
 
-[badge-license]: https://img.shields.io/badge/license-MIT-green.svg
+[badge-license]: https://img.shields.io/badge/license-MIT-green.svg?style=flat-square
